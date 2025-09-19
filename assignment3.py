@@ -32,10 +32,54 @@ def group_main_road_quality_by_governorate(data):
 st.subheader("Main Road Quality Distribution by Governorate")
 
 main_road_quality = group_main_road_quality_by_governorate(data)
-st.write("Values represent the proportion of towns reporting each road condition.")
-st.dataframe(main_road_quality)
-st.bar_chart(main_road_quality.set_index('AreaLabel'))
+area_labels = main_road_quality['AreaLabel']
+good = main_road_quality['State of the main roads - good']
+acceptable = main_road_quality['State of the main roads - acceptable']
+bad = main_road_quality['State of the main roads - bad']
 
+st.write("Values represent the proportion of towns reporting each road condition.")
+
+st.dataframe(main_road_quality)
+
+show_good = st.checkbox("Show Good Roads", value=True)
+show_acceptable = st.checkbox("Show Acceptable Roads", value=True)
+show_bad = st.checkbox("Show Bad Roads", value=True)
+
+fig = go.Figure()
+if show_good:
+    fig.add_trace(go.Bar(
+        x=area_labels,
+        y=good,
+        name='Good',
+        marker_color='green'
+    ))
+if show_acceptable:
+    fig.add_trace(go.Bar(
+        x=area_labels,
+        y=acceptable,
+        name='Acceptable',
+        marker_color='#FFC067'
+    ))
+if show_bad:
+    fig.add_trace(go.Bar(
+        x=area_labels,
+        y=bad,
+        name='Bad',
+        marker_color='red'
+    ))
+fig.update_layout(
+    barmode='stack',
+    title='Main Road Quality Distribution by Governorate',
+    xaxis_title='Governorate',
+    yaxis_title='Proportion of Towns',
+    legend_title='Road Condition',
+    height=600
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+
+#2nd visualization
 transport_cols = [
     'Existence of dedicated bus stops - exists',
     'The main means of public transport - vans',
